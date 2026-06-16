@@ -1,0 +1,44 @@
+# Conda
+.env
+.conda/
+conda-meta/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# VSCode
+.vscode/
+
+# TensorFlow
+*.ckpt
+*.pb
+
+# Modelos treinados
+*.keras
+*.h5
+
+# Logs
+logs/
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Dataset
+dataset/images/
+dataset/train/
+dataset/test/
+dataset/valid/
+
+# PyCharm
+.idea/
+
+# Notebook
+.ipynb_checkpoints/
+
+# Temp
+*.tmp
+*.cache

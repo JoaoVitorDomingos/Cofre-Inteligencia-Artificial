@@ -1,0 +1,21 @@
+name: ia-cofre
+
+dependencies:
+
+  - python=3.11
+
+  - pip
+
+  - pip:
+
+      - tensorflow==2.20.0
+
+      - opencv-python
+
+      - numpy
+
+      - matplotlib
+
+      - scikit-learn
+
+      - pyserial
