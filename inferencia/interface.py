@@ -71,10 +71,15 @@ class Interface:
             cor = (0, 200, 0)
             texto = "STATUS: ROSTO LIVRE"
 
-        else:
+        elif classe == "obstruido":
 
             cor = (0, 0, 255)
             texto = "STATUS: ROSTO OBSTRUIDO"
+
+        else:
+
+            cor = (0, 255, 255)
+            texto = "STATUS: NENHUM ROSTO DETECTADO"
 
         cv2.putText(
             frame,

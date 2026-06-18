@@ -7,6 +7,8 @@ Fluxo:
 
 Webcam
     ↓
+Detector Facial
+    ↓
 Predictor (CNN)
     ↓
 Interface
@@ -17,9 +19,13 @@ Exibição em tempo real
 import cv2
 
 from camera import Camera
+from face_detector import FaceDetector
 from interface import Interface
 from predictor import FaceOcclusionPredictor
+from serial_controller import SerialController
 
+CMD_OPEN = "1"
+CMD_CLOSE = "0"
 
 def main():
 
@@ -36,7 +42,14 @@ def main():
 
     camera = Camera()
 
+    detector = FaceDetector()
+
     interface = Interface()
+
+    serial = SerialController(
+        port="COM3",      # ! Altere para a porta do seu Arduino
+        baudrate=9600,
+    )
 
     while True:
 
@@ -46,12 +59,42 @@ def main():
             print("Erro ao capturar frame.")
             break
 
-        resultado = predictor.predict(frame)
+        # Detecta o rosto
+        rosto, bbox = detector.detect(frame)
 
+        if rosto is not None:
+
+            # Faz a inferência somente no rosto
+            resultado = predictor.predict(rosto)
+
+            # Desenha o retângulo ao redor do rosto
+            detector.draw_bbox(
+                frame,
+                bbox,
+            )
+
+            classe = resultado["classe"]
+            confianca = resultado["confianca"]
+
+            # Envia comando ao Arduino
+            if classe == "livre":
+                serial.send(CMD_OPEN)
+            else:
+                serial.send(CMD_CLOSE)
+
+        else:
+
+            # Caso nenhum rosto seja encontrado
+            classe = "Nenhum rosto"
+            confianca = 0.0
+
+            serial.send(CMD_CLOSE)
+
+        # Atualiza interface
         frame = interface.draw(
             frame=frame,
-            classe=resultado["classe"],
-            confianca=resultado["confianca"],
+            classe=classe,
+            confianca=confianca,
             fps=camera.get_fps(),
         )
 
@@ -62,6 +105,7 @@ def main():
         if tecla == ord("q"):
             break
 
+    serial.close()
     camera.release()
 
     print()
