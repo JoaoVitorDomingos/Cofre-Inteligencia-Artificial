@@ -10,18 +10,18 @@ O dataset **não está incluído neste repositório** devido ao seu tamanho e à
 
 **Nome:**
 
-Burglary Detection / Face Mask Detection
+Face occlusion classification
 
 **Origem:**
 
-Roboflow Universe
+[GITHUB LamKser](https://github.com/LamKser)
 
 **Objetivo:**
 
 Classificar imagens em duas categorias:
 
-- ✅ Rosto livre
-- 🚫 Rosto parcialmente obstruído
+- ✅ Rosto livre (0)
+- 🚫 Rosto obstruído (1)
 
 ---
 
@@ -29,7 +29,7 @@ Classificar imagens em duas categorias:
 
 Faça o download do dataset através do link:
 
-https://universe.roboflow.com/face-mask-detection-v7lf1/burglary-detection
+https://www.kaggle.com/datasets/dinhhoanglam/face-occlusion
 
 ---
 
@@ -39,18 +39,19 @@ Após a extração, esta pasta deve possuir a seguinte estrutura:
 
 ```text
 dataset/
-
-├── train/
-│   ├── livre/
-│   └── tampado/
-│
-├── valid/
-│   ├── livre/
-│   └── tampado/
-│
-└── test/
-    ├── livre/
-    └── tampado/
+├── face_occlusion/
+    ├── Test/
+    │   ├── livre/
+    │   └── obstruido/
+    │
+    ├── Train/
+    │   ├── livre/
+    │   └── obstruido/
+    │
+    └── Val/
+        ├── livre/
+        └── obstruido/
+├── README.md
 ```
 
 Caso a estrutura exportada pelo Roboflow seja diferente, ajuste os caminhos utilizados no código de treinamento.
@@ -104,16 +105,13 @@ Caso o link deixe de funcionar, consulte a documentação oficial do Roboflow ou
 
 ```text
 dataset/
-
 ├── README.md
-
-├── train/
-
-├── valid/
-
-└── test/
+├── face_occlusion/
+    ├── train/
+    ├── valid/
+    └── test/
 ```
 
 Não é recomendado adicionar as imagens ao repositório Git, pois elas podem aumentar significativamente o tamanho do projeto.
 
-As pastas `train/`, `valid/` e `test/` devem estar listadas no `.gitignore`.
+A pasta `face_occlusion/` deve estar listadas no `.gitignore`.
