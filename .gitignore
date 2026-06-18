@@ -28,10 +28,7 @@ logs/
 Thumbs.db
 
 # Dataset
-dataset/images/
-dataset/train/
-dataset/test/
-dataset/valid/
+dataset/face_occlusion/
 
 # PyCharm
 .idea/
