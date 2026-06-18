@@ -1,0 +1,8 @@
+              precision    recall  f1-score   support
+
+       livre     0.9607    0.9722    0.9664       503
+   obstruido     0.9701    0.9579    0.9640       475
+
+    accuracy                         0.9652       978
+   macro avg     0.9654    0.9650    0.9652       978
+weighted avg     0.9653    0.9652    0.9652       978
