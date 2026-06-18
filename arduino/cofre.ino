@@ -35,6 +35,11 @@ int nivelBloqueio = 0;
 unsigned long ultimoAcerto = 0;
 unsigned long tempoTimeout = 10000;
 
+// IA
+bool modoIA = true;
+
+bool acessoLiberado = false;
+
 // --------------------------------------------------
 
 bool dentroFaixa(int valor, int alvo)
@@ -98,10 +103,26 @@ void abrirCofre()
   lcd.clear();
 
   lcd.setCursor(0, 0);
-  lcd.print("Acesso");
+
+  if (modoIA)
+  {
+    lcd.print("Face OK");
+  }
+  else
+  {
+    lcd.print("Acesso");
+  }
 
   lcd.setCursor(0, 1);
-  lcd.print("Liberado");
+
+  if (modoIA)
+  {
+    lcd.print("Liberado IA");
+  }
+  else
+  {
+    lcd.print("Liberado");
+  }
 
   servoMotor.write(0);
 
@@ -120,9 +141,49 @@ void abrirCofre()
 
   delay(500);
 
-  while (digitalRead(pinoBotao) == LOW);
+  if (!modoIA)
+  {
+    while (digitalRead(pinoBotao) == LOW);
+  }
 
   lcd.clear();
+
+  // Se estiver em modo IA, volta para a tela de espera
+  if (modoIA)
+  {
+    lcd.setCursor(0, 0);
+    lcd.print("Modo IA");
+
+    lcd.setCursor(0, 1);
+    lcd.print("Aguardando...");
+  }
+}
+
+// --------------------------------------------------
+
+void verificarSerial()
+{
+  while (Serial.available())
+  {
+    char comando = Serial.read();
+
+    if (comando == '\n' || comando == '\r')
+      continue;
+
+    if (comando == '1')
+    {
+      if (!acessoLiberado)
+      {
+        acessoLiberado = true;
+        abrirCofre();
+      }
+    }
+
+    else if (comando == '0')
+    {
+      acessoLiberado = false;
+    }
+  }
 }
 
 // --------------------------------------------------
@@ -151,12 +212,29 @@ void setup()
   lcd.clear();
 
   delay(500);
+
+  if (modoIA)
+  {
+      lcd.clear();
+
+      lcd.setCursor(0,0);
+      lcd.print("Modo IA");
+
+      lcd.setCursor(0,1);
+      lcd.print("Aguardando...");
+  }
 }
 
 // --------------------------------------------------
 
 void loop()
 {
+  if (modoIA)
+  {
+    verificarSerial();
+    return;
+  }
+
   int valor = analogRead(pinoPotencia);
 
   // BLOQUEIO
