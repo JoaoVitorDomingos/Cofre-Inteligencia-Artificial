@@ -112,11 +112,9 @@ Treinada integralmente do zero, sem utilização de pesos pré-treinados ou téc
 
 ## Dataset
 
-Dataset público utilizado durante o treinamento.
+Dataset público utilizado durante o treinamento:
 
-Base principal:
-
-Face Mask / Burglary Detection Dataset (Roboflow)
+[Face Occlusion](kaggle.com/datasets/dinhhoanglam/face-occlusion) | [LamKser](github.com/LamKser/face-occlusion-classification)
 
 > O dataset não está presente neste repositório devido ao seu tamanho.
 
@@ -131,14 +129,12 @@ para instruções de download.
 # 📁 Estrutura do projeto
 
 ```text
-cofre-inteligente-ia/
+Cofre-Inteligencia-Artificial/
 
 │
 ├── arduino/
 │
 ├── dataset/
-│
-├── docs/
 │
 ├── inferencia/
 │
@@ -301,7 +297,7 @@ A proposta consiste em utilizar um modelo de Machine Learning treinado no comput
 | Nome |
 |----------------|
 | João Capazório |
-| Guilherme Henrique |
+| [Guilherme Henrique](https://github.com/GuilhermeHenriqueeee) |
 
 ---
 

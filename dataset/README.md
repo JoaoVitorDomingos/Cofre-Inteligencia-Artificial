@@ -54,7 +54,7 @@ dataset/
 ├── README.md
 ```
 
-Caso a estrutura exportada pelo Roboflow seja diferente, ajuste os caminhos utilizados no código de treinamento.
+> Deverá ser realizado ajustes no nome das pastas.
 
 ---
 
@@ -94,7 +94,7 @@ Este repositório não redistribui o dataset original.
 
 Todos os direitos sobre as imagens pertencem aos seus respectivos autores e/ou à plataforma onde foram disponibilizadas.
 
-Caso o link deixe de funcionar, consulte a documentação oficial do Roboflow ou substitua por um dataset equivalente contendo imagens de:
+Caso o link deixe de funcionar, consulte o perfil do autor oficial ou substitua por um dataset equivalente contendo imagens de:
 
 - rostos livres;
 - rostos parcialmente obstruídos.
