@@ -1,6 +1,4 @@
 """
-inferencia.py
-
 Sistema de inferência em tempo real.
 
 Fluxo:

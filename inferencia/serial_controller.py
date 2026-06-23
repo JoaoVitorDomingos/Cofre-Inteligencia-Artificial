@@ -1,6 +1,4 @@
 """
-serial_controller.py
-
 Responsável pela comunicação serial entre
 o sistema de IA e o Arduino.
 
@@ -72,7 +70,7 @@ class SerialController:
         """
         Envia um comando ao Arduino.
 
-        Parameters
+        Parametros
         ----------
         command : str
             Exemplo:

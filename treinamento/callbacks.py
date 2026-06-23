@@ -29,7 +29,7 @@ def criar_callbacks():
     """
     Cria e retorna a lista de callbacks.
 
-    Returns
+    Retorno
     -------
     list
         Lista de callbacks do Keras.

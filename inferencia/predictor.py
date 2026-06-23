@@ -48,11 +48,11 @@ class FaceOcclusionPredictor:
         """
         Realiza o pré-processamento da imagem.
 
-        Parameters
+        Parametros
         ----------
         frame : numpy.ndarray
 
-        Returns
+        Retorno
         -------
         numpy.ndarray
             Tensor pronto para inferência.
@@ -85,11 +85,11 @@ class FaceOcclusionPredictor:
         """
         Executa a inferência.
 
-        Parameters
+        Parametros
         ----------
         frame : numpy.ndarray
 
-        Returns
+        Retorno
         -------
         dict
         """

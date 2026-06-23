@@ -1,8 +1,5 @@
 """
-face_detector.py
-
-Responsável pela detecção facial utilizando
-Haar Cascade do OpenCV.
+Responsável pela detecção facial
 
 Funções:
 - Detectar rosto
@@ -35,11 +32,11 @@ class FaceDetector:
         """
         Detecta o maior rosto da imagem.
 
-        Parameters
+        Parametros
         ----------
         frame : numpy.ndarray
 
-        Returns
+        Retorno
         -------
         tuple
             (face_crop, bbox)

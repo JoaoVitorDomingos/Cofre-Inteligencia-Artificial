@@ -1,6 +1,4 @@
 """
-camera.py
-
 Responsável pelo gerenciamento da webcam.
 
 Funções:
@@ -84,7 +82,7 @@ class Camera:
         """
         Captura um frame.
 
-        Returns
+        Retorno
         -------
         tuple(bool, frame)
         """

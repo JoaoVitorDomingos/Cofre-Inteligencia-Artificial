@@ -1,6 +1,4 @@
 """
-interface.py
-
 Responsável pela interface gráfica do sistema.
 
 Funções:
@@ -30,14 +28,14 @@ class Interface:
         """
         Desenha a interface sobre o frame.
 
-        Parameters
+        Parametros
         ----------
         frame : numpy.ndarray
         classe : str
         confianca : float
         fps : float
 
-        Returns
+        Retorno
         -------
         frame
         """

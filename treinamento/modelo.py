@@ -20,7 +20,7 @@ def criar_modelo():
     """
     Cria a arquitetura da CNN.
 
-    Returns
+    Retorno
     -------
     tf.keras.Model
     """

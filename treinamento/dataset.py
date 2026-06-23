@@ -21,7 +21,7 @@ AUTOTUNE = tf.data.AUTOTUNE
 
 def _criar_dataset(diretorio: Path, shuffle: bool) -> tf.data.Dataset:
     """
-    Cria um dataset utilizando image_dataset_from_directory().
+    Cria um dataset.
 
     Parametros
     ----------
