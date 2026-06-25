@@ -21,7 +21,7 @@ class Camera:
         camera_index=0,
         width=1280,
         height=720,
-        window_name="🔐 Cofre Inteligente com IA",
+        window_name="Cofre Inteligente com IA",
         screen_width=1920,
         screen_height=1080,
     ):

@@ -1,22 +1,24 @@
 #include <LiquidCrystal.h>
 #include <Servo.h>
 
-// LCD
-LiquidCrystal lcd(5, 6, 7, 8, 9, 10);
+// LCD Configurado nos pinos digitais de 2 a 5, 11 e 12
+// LiquidCrystal lcd(RS, RW, E, D4, D5, D6, D7)
+LiquidCrystal lcd(12, 11, 10, 5, 4, 3, 2);
 
-// Aqui estamos criando o servo
+// Instanciando o servo
 Servo servoMotor;
 
-// Pinos utilizados
-//Os pinos do LCD é o D5 até o D10
-int pinoPotencia = A0;
-int pinoBotao = 2;
-int pinoLedVermelho = 11;
-int pinoLedVerde = 12;
-int buzzer = 4;
+// Pinos utilizados REORGANIZADOS
+const int pinoPotencia = A0;      // Potenciômetro do segredo
+const int pinoBotao = A1;         // Botão de confirmação
+const int pinoLedVerde = A2;      // LED de acerto
+const int pinoLedVermelho = A3;   // LED de erro/bloqueio
+const int buzzer = 7;             // Buzzer livre no pino 7
+const int pinoServo = 6;          // Servo livre e no PWM do pino 6
+const int pinoLedLCD = 13;
 
 // SENHA PADRÃO
-int senha[3] = {200, 400, 800};
+int senha[3] = {200, 400, 600};
 int toleranciaSenha = 50;
 
 // CONTROLE DE ETAPAS
@@ -35,10 +37,10 @@ int nivelBloqueio = 0;
 unsigned long ultimoAcerto = 0;
 unsigned long tempoTimeout = 10000;
 
-// IA
-bool modoIA = true;
-
-bool acessoLiberado = false;
+// Controle da IA
+bool iaLiberou = false;
+bool isIAAtivada = false;
+bool mensagemIAExibida = false;
 
 // --------------------------------------------------
 
@@ -82,14 +84,10 @@ void erro()
 
   if (tentativas >= 3)
   {
-    nivelBloqueio++;
-
-    // 15s, 30s, 45s...
-    duracaoBloqueio = nivelBloqueio * 15000;
+    duracaoBloqueio = 5000;
 
     bloqueado = true;
     inicioBloqueio = millis();
-
   }
 
   delay(2000);
@@ -103,199 +101,61 @@ void abrirCofre()
   lcd.clear();
 
   lcd.setCursor(0, 0);
-
-  if (modoIA)
-  {
-    lcd.print("Face OK");
-  }
-  else
-  {
-    lcd.print("Acesso");
-  }
+  lcd.print("Acesso");
 
   lcd.setCursor(0, 1);
+  lcd.print("Liberado");
 
-  if (modoIA)
-  {
-    lcd.print("Liberado IA");
-  }
-  else
-  {
-    lcd.print("Liberado");
-  }
-
-  servoMotor.write(0);
+  servoMotor.write(0); // Abre a trava
 
   digitalWrite(pinoLedVerde, HIGH);
-
   tone(buzzer, 1200, 500);
 
   delay(3000);
 
   digitalWrite(pinoLedVerde, LOW);
-
-  servoMotor.write(90);
+  
+  servoMotor.write(90); // Tranca novamente após o tempo de abertura
 
   etapaAtual = 0;
   tentativas = 0;
 
   delay(500);
 
-  if (!modoIA)
-  {
-    while (digitalRead(pinoBotao) == LOW);
-  }
+  while (digitalRead(pinoBotao) == LOW);
 
   lcd.clear();
-
-  // Se estiver em modo IA, volta para a tela de espera
-  if (modoIA)
-  {
-    lcd.setCursor(0, 0);
-    lcd.print("Modo IA");
-
-    lcd.setCursor(0, 1);
-    lcd.print("Aguardando...");
-  }
 }
 
 // --------------------------------------------------
 
-void verificarSerial()
+bool setIA()
+{
+  return Serial.available();
+}
+
+void lerIA()
 {
   while (Serial.available())
   {
     char comando = Serial.read();
 
-    if (comando == '\n' || comando == '\r')
-      continue;
-
     if (comando == '1')
     {
-      if (!acessoLiberado)
-      {
-        acessoLiberado = true;
-        abrirCofre();
-      }
+      iaLiberou = true;
     }
 
-    else if (comando == '0')
+    if (comando == '0')
     {
-      acessoLiberado = false;
+      iaLiberou = false;
     }
   }
 }
 
 // --------------------------------------------------
 
-void setup()
+void cofre(int valor)
 {
-  Serial.begin(9600);
-  pinMode(pinoBotao, INPUT_PULLUP);
-
-  pinMode(pinoLedVerde, OUTPUT);
-  pinMode(pinoLedVermelho, OUTPUT);
-
-  servoMotor.attach(3);
-  servoMotor.write(90);
-
-  lcd.begin(16, 2);
-
-  lcd.setCursor(0, 0);
-  lcd.print("Cofre Digital");
-
-  lcd.setCursor(0, 1);
-  lcd.print("Inicializando");
-
-  delay(2000);
-
-  lcd.clear();
-
-  delay(500);
-
-  if (modoIA)
-  {
-      lcd.clear();
-
-      lcd.setCursor(0,0);
-      lcd.print("Modo IA");
-
-      lcd.setCursor(0,1);
-      lcd.print("Aguardando...");
-  }
-}
-
-// --------------------------------------------------
-
-void loop()
-{
-  if (modoIA)
-  {
-    verificarSerial();
-    return;
-  }
-
-  int valor = analogRead(pinoPotencia);
-
-  // BLOQUEIO
-  if (bloqueado)
-  {
-    tone(buzzer, 800, 500);
-	delay(200);
-
-	tone(buzzer, 1000, 500);
-	delay(200);
-    
-    lcd.setCursor(0, 0);
-    lcd.print("ALARME ATIVO   ");
-
-    lcd.setCursor(0, 1);
-    lcd.print("Cofre Travado  ");
-
-    digitalWrite(pinoLedVermelho, HIGH);
-    delay(300);
-
-    digitalWrite(pinoLedVermelho, LOW);
-    delay(300);
-
-    if (millis() - inicioBloqueio >= duracaoBloqueio)
-    {
-      noTone(buzzer);
-      bloqueado = false;
-      tentativas = 0;
-
-      lcd.clear();
-    }
-
-    return;
-  }
-
-  // TIMEOUT
-  if (etapaAtual > 0)
-  {
-    if (millis() - ultimoAcerto > tempoTimeout)
-    {
-      etapaAtual = 0;
-
-      lcd.clear();
-
-      lcd.setCursor(0, 0);
-      lcd.print("Tempo Excedido");
-
-      digitalWrite(pinoLedVermelho, HIGH);
-
-      delay(1000);
-
-      digitalWrite(pinoLedVermelho, LOW);
-
-      delay(2000);
-
-      lcd.clear();
-
-      return;
-    }
-  }
-
   // TELA PRINCIPAL
   lcd.setCursor(0, 0);
   lcd.print("Senha ");
@@ -310,8 +170,7 @@ void loop()
   // BOTÃO PRESSIONADO
   if (digitalRead(pinoBotao) == LOW)
   {
-    // Debounce
-    delay(50);
+    delay(50); // Debounce
 
     if (digitalRead(pinoBotao) == LOW)
     {
@@ -330,18 +189,39 @@ void loop()
         piscarVerde();
 
         etapaAtual++;
-
         ultimoAcerto = millis();
 
         delay(1500);
-
         lcd.clear();
 
         if (etapaAtual >= 3)
         {
-          abrirCofre();
+            if (iaLiberou)
+            {
+                abrirCofre();
+            }
+            else
+            {
+                lcd.clear();
 
-          while (digitalRead(pinoBotao) == LOW);
+                lcd.setCursor(0, 0);
+                lcd.print("Rosto Obstruido");
+
+                lcd.setCursor(0, 1);
+                lcd.print("Cofre Bloqueou");
+
+                digitalWrite(pinoLedVermelho, HIGH);
+
+                tone(buzzer, 500, 1000);
+
+                delay(3000);
+
+                digitalWrite(pinoLedVermelho, LOW);
+
+                etapaAtual = 0;
+            }
+
+            while (digitalRead(pinoBotao) == LOW);
         }
 
         return;
@@ -349,11 +229,155 @@ void loop()
       else
       {
         erro();
-
         while (digitalRead(pinoBotao) == LOW);
-
         return;
       }
     }
   }
+}
+
+// --------------------------------------------------
+
+void setup()
+{
+  Serial.begin(9600);
+  
+  // Configuração dos pinos
+  pinMode(pinoBotao, INPUT_PULLUP);
+  pinMode(pinoLedVerde, OUTPUT);
+  pinMode(pinoLedVermelho, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  
+  pinMode(pinoLedLCD, OUTPUT);
+  digitalWrite(pinoLedLCD, HIGH);
+  
+  // Inicialização do Servo no pino correto (6)
+  servoMotor.attach(pinoServo);
+  servoMotor.write(90); // Posição trancado padrão
+
+  // Inicialização do LCD
+  lcd.begin(16, 2);
+
+  lcd.setCursor(0, 0);
+  lcd.print("Cofre Digital");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Inicializando");
+
+  delay(1000);
+  lcd.clear();
+
+  isIAAtivada = setIA();
+
+  if(isIAAtivada) 
+  {
+    lcd.setCursor(0, 0);
+    lcd.print("IA ativada!");
+
+    delay(1000);
+    lcd.clear();
+  } 
+  else 
+  {
+    lcd.setCursor(0, 0);
+    lcd.print("IA desativada!");
+
+    delay(1000);
+    lcd.clear();
+  }
+}
+
+// --------------------------------------------------
+
+void loop()
+{
+  lerIA();
+
+  int valor = analogRead(pinoPotencia);
+  lcd.display();
+  
+  // BLOQUEIO
+  if (bloqueado)
+  {
+    tone(buzzer, 800, 500);
+    delay(200);
+
+    tone(buzzer, 1000, 500);
+    delay(200);
+    
+    lcd.setCursor(0, 0);
+    lcd.print("ALARME ATIVO    ");
+
+    lcd.setCursor(0, 1);
+    lcd.print("Cofre Travado  ");
+
+    digitalWrite(pinoLedVermelho, HIGH);
+    delay(300);
+
+    digitalWrite(pinoLedVermelho, LOW);
+    delay(300);
+
+    if (millis() - inicioBloqueio >= duracaoBloqueio)
+    {
+      noTone(buzzer);
+      bloqueado = false;
+      tentativas = 0;
+      lcd.clear();
+    }
+
+    return;
+  }
+
+  // TIMEOUT
+  if (etapaAtual > 0)
+  {
+    if (millis() - ultimoAcerto > tempoTimeout)
+    {
+      etapaAtual = 0;
+
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Tempo Excedido");
+
+      digitalWrite(pinoLedVermelho, HIGH);
+      delay(1000);
+      digitalWrite(pinoLedVermelho, LOW);
+      delay(2000);
+
+      lcd.clear();
+      return;
+    }
+  }
+
+  if(isIAAtivada) 
+  {
+    if(iaLiberou) 
+    {
+      mensagemIAExibida = false;
+      cofre(valor);
+    } 
+    else 
+    {
+      if(!mensagemIAExibida) 
+      {
+        lcd.clear();
+
+        lcd.setCursor(0, 0);
+        lcd.print("Rosto Obstruido");
+
+        lcd.setCursor(0, 1);
+        lcd.print("Cofre Bloqueado");
+
+        mensagemIAExibida = true;
+      }
+
+      etapaAtual = 0;
+    }
+  } 
+  else 
+  {
+    cofre(valor);
+  }
+
+  
 }

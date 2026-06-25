@@ -45,7 +45,7 @@ def main():
     interface = Interface()
 
     serial = SerialController(
-        port="COM3",      # ! Altere para a porta do seu Arduino
+        port="COM4",      # ! Altere para a porta do seu Arduino
         baudrate=9600,
     )
 
