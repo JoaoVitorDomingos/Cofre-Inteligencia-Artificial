@@ -114,7 +114,7 @@ Treinada integralmente do zero, sem utilização de pesos pré-treinados ou téc
 
 Dataset público utilizado durante o treinamento:
 
-[Face Occlusion](kaggle.com/datasets/dinhhoanglam/face-occlusion) | [LamKser](github.com/LamKser/face-occlusion-classification)
+[Face Occlusion](https://www.kaggle.com/datasets/dinhhoanglam/face-occlusion) | [LamKser](https://github.com/LamKser)
 
 > O dataset não está presente neste repositório devido ao seu tamanho.
 
