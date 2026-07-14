@@ -129,27 +129,24 @@ void abrirCofre()
 
 // --------------------------------------------------
 
-bool setIA()
-{
-  return Serial.available();
-}
-
 void lerIA()
 {
-  while (Serial.available())
-  {
-    char comando = Serial.read();
-
-    if (comando == '1')
+    while (Serial.available())
     {
-      iaLiberou = true;
-    }
+        isIAAtivada = true;
 
-    if (comando == '0')
-    {
-      iaLiberou = false;
+        char comando = Serial.read();
+
+        if (comando == '1')
+        {
+            iaLiberou = true;
+        }
+
+        if (comando == '0')
+        {
+            iaLiberou = false;
+        }
     }
-  }
 }
 
 // --------------------------------------------------
@@ -196,30 +193,7 @@ void cofre(int valor)
 
         if (etapaAtual >= 3)
         {
-            if (iaLiberou)
-            {
-                abrirCofre();
-            }
-            else
-            {
-                lcd.clear();
-
-                lcd.setCursor(0, 0);
-                lcd.print("Rosto Obstruido");
-
-                lcd.setCursor(0, 1);
-                lcd.print("Cofre Bloqueou");
-
-                digitalWrite(pinoLedVermelho, HIGH);
-
-                tone(buzzer, 500, 1000);
-
-                delay(3000);
-
-                digitalWrite(pinoLedVermelho, LOW);
-
-                etapaAtual = 0;
-            }
+            abrirCofre();
 
             while (digitalRead(pinoBotao) == LOW);
         }
@@ -267,24 +241,7 @@ void setup()
   delay(1000);
   lcd.clear();
 
-  isIAAtivada = setIA();
-
-  if(isIAAtivada) 
-  {
-    lcd.setCursor(0, 0);
-    lcd.print("IA ativada!");
-
-    delay(1000);
-    lcd.clear();
-  } 
-  else 
-  {
-    lcd.setCursor(0, 0);
-    lcd.print("IA desativada!");
-
-    delay(1000);
-    lcd.clear();
-  }
+  isIAAtivada = false;
 }
 
 // --------------------------------------------------
@@ -349,35 +306,30 @@ void loop()
     }
   }
 
-  if(isIAAtivada) 
+  // IA conectada e rosto bloqueado
+  if (isIAAtivada && !iaLiberou)
   {
-    if(iaLiberou) 
-    {
-      mensagemIAExibida = false;
-      cofre(valor);
-    } 
-    else 
-    {
-      if(!mensagemIAExibida) 
+      etapaAtual = 0;
+
+      if (!mensagemIAExibida)
       {
-        lcd.clear();
+          lcd.clear();
 
-        lcd.setCursor(0, 0);
-        lcd.print("Rosto Obstruido");
+          lcd.setCursor(0,0);
+          lcd.print("Rosto Obstruido");
 
-        lcd.setCursor(0, 1);
-        lcd.print("Cofre Bloqueado");
+          lcd.setCursor(0,1);
+          lcd.print("Cofre Bloqueado");
 
-        mensagemIAExibida = true;
+          mensagemIAExibida = true;
       }
 
-      etapaAtual = 0;
-    }
-  } 
-  else 
-  {
-    cofre(valor);
+      // Impede qualquer operação do cofre
+      return;
   }
 
-  
+  // Se chegou aqui, pode usar normalmente
+  mensagemIAExibida = false;
+
+  cofre(valor);
 }
